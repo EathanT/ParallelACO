@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\rlgl.obj",
+            "outputs": [
+                "x64\\Debug\\rlgl.h_E4B708BD2C235A4E.ifc.dt.module.json",
+                "x64\\Debug\\rlgl.h_E4B708BD2C235A4E.ifc.dt.d.json",
+                "x64\\Debug\\rlgl.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Users\\Eatha\\Documents\\Projects\\CSCI551_Final_Parallel_Project\\CSCI551_Final_Parallel_Project\\include\\rlgl.h",
+                    "source-path": "c:\\users\\eatha\\documents\\projects\\csci551_final_parallel_project\\csci551_final_parallel_project\\include\\rlgl.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

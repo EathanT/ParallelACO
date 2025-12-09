@@ -1,0 +1,25 @@
+﻿  Scanning sources for module dependencies...
+AntGraphics.obj : error LNK2019: unresolved external symbol _DrawLineEx referenced in function "private: void __thiscall AntGraphics::RenderCityGraph(void)" (?RenderCityGraph@AntGraphics@@AAEXXZ)
+AntGraphics.obj : error LNK2019: unresolved external symbol _DrawCircle referenced in function "private: void __thiscall AntGraphics::RenderCityGraph(void)" (?RenderCityGraph@AntGraphics@@AAEXXZ)
+AntGraphics.obj : error LNK2019: unresolved external symbol _DrawRectangleLines referenced in function "private: void __thiscall AntGraphics::DrawMatrices(void)" (?DrawMatrices@AntGraphics@@AAEXXZ)
+AntGraphics.obj : error LNK2019: unresolved external symbol _LoadImage referenced in function "private: struct Image __thiscall AntGraphics::loadAntImage(void)" (?loadAntImage@AntGraphics@@AAE?AUImage@@XZ)
+AntGraphics.obj : error LNK2019: unresolved external symbol _ImageFromImage referenced in function "private: struct Image __thiscall AntGraphics::loadAntImage(void)" (?loadAntImage@AntGraphics@@AAE?AUImage@@XZ)
+AntGraphics.obj : error LNK2019: unresolved external symbol _ImageResize referenced in function "private: void __thiscall AntGraphics::prepareTexture(struct Image const &)" (?prepareTexture@AntGraphics@@AAEXABUImage@@@Z)
+AntGraphics.obj : error LNK2019: unresolved external symbol _ImageColorReplace referenced in function "private: void __thiscall AntGraphics::prepareTexture(struct Image const &)" (?prepareTexture@AntGraphics@@AAEXABUImage@@@Z)
+AntGraphics.obj : error LNK2019: unresolved external symbol _LoadTextureFromImage referenced in function "private: void __thiscall AntGraphics::prepareTexture(struct Image const &)" (?prepareTexture@AntGraphics@@AAEXABUImage@@@Z)
+AntGraphics.obj : error LNK2019: unresolved external symbol _DrawTexturePro referenced in function "private: void __thiscall AntGraphics::DrawAnt(void)const " (?DrawAnt@AntGraphics@@ABEXXZ)
+AntGraphics.obj : error LNK2019: unresolved external symbol _DrawText referenced in function "private: void __thiscall AntGraphics::DrawMatrices(void)" (?DrawMatrices@AntGraphics@@AAEXXZ)
+AntGraphics.obj : error LNK2019: unresolved external symbol _TextFormat referenced in function "private: void __thiscall AntGraphics::DrawMatrices(void)" (?DrawMatrices@AntGraphics@@AAEXXZ)
+main.obj : error LNK2019: unresolved external symbol _InitWindow referenced in function _main
+main.obj : error LNK2019: unresolved external symbol _CloseWindow referenced in function _main
+main.obj : error LNK2019: unresolved external symbol _WindowShouldClose referenced in function _main
+main.obj : error LNK2019: unresolved external symbol _ClearBackground referenced in function _main
+main.obj : error LNK2019: unresolved external symbol _BeginDrawing referenced in function _main
+main.obj : error LNK2019: unresolved external symbol _EndDrawing referenced in function _main
+main.obj : error LNK2019: unresolved external symbol _SetTargetFPS referenced in function _main
+main.obj : error LNK2019: unresolved external symbol _GetFrameTime referenced in function _main
+main.obj : error LNK2019: unresolved external symbol _SetTraceLogLevel referenced in function _main
+main.obj : error LNK2019: unresolved external symbol _UnloadTexture referenced in function "public: __thiscall AntGraphics::~AntGraphics(void)" (??1AntGraphics@@QAE@XZ)
+.\lib\\raylib.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'
+lib\raylibdll.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\Debug\CSCI551_Final_Parallel_Project.exe : fatal error LNK1120: 21 unresolved externals

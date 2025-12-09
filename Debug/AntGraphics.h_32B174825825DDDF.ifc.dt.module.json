@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Debug\\AntGraphics.obj",
+            "outputs": [
+                "Debug\\AntGraphics.h_32B174825825DDDF.ifc.dt.module.json",
+                "Debug\\AntGraphics.h_32B174825825DDDF.ifc.dt.d.json",
+                "Debug\\AntGraphics.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Users\\Eatha\\Documents\\Projects\\CSCI551_Final_Parallel_Project\\CSCI551_Final_Parallel_Project\\src\\AntGraphics.h",
+                    "source-path": "c:\\users\\eatha\\documents\\projects\\csci551_final_parallel_project\\csci551_final_parallel_project\\src\\antgraphics.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

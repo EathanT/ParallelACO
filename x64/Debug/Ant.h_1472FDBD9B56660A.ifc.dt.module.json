@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\Ant.obj",
+            "outputs": [
+                "x64\\Debug\\Ant.h_1472FDBD9B56660A.ifc.dt.module.json",
+                "x64\\Debug\\Ant.h_1472FDBD9B56660A.ifc.dt.d.json",
+                "x64\\Debug\\Ant.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Users\\Eatha\\Documents\\Projects\\CSCI551_Final_Parallel_Project\\CSCI551_Final_Parallel_Project\\src\\Ant.h",
+                    "source-path": "c:\\users\\eatha\\documents\\projects\\csci551_final_parallel_project\\csci551_final_parallel_project\\src\\ant.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Debug\\AntGraphics.obj",
+            "outputs": [
+                "Debug\\AntGraphics.cpp.ifc.dt.module.json",
+                "Debug\\AntGraphics.cpp.ifc.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

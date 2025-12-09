@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\raylib.obj",
+            "outputs": [
+                "x64\\Debug\\raylib.h_6BCDE3CE2309F1B0.ifc.dt.module.json",
+                "x64\\Debug\\raylib.h_6BCDE3CE2309F1B0.ifc.dt.d.json",
+                "x64\\Debug\\raylib.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Users\\Eatha\\Documents\\Projects\\CSCI551_Final_Parallel_Project\\CSCI551_Final_Parallel_Project\\include\\raylib.h",
+                    "source-path": "c:\\users\\eatha\\documents\\projects\\csci551_final_parallel_project\\csci551_final_parallel_project\\include\\raylib.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\raymath.obj",
+            "outputs": [
+                "x64\\Debug\\raymath.h_D5F04918FE673D0F.ifc.dt.module.json",
+                "x64\\Debug\\raymath.h_D5F04918FE673D0F.ifc.dt.d.json",
+                "x64\\Debug\\raymath.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Users\\Eatha\\Documents\\Projects\\CSCI551_Final_Parallel_Project\\CSCI551_Final_Parallel_Project\\include\\raymath.h",
+                    "source-path": "c:\\users\\eatha\\documents\\projects\\csci551_final_parallel_project\\csci551_final_parallel_project\\include\\raymath.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

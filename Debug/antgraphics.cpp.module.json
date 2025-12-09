@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Debug\\AntGraphics.obj",
+            "outputs": [
+                "C:\\Users\\Eatha\\Documents\\Projects\\CSCI551_Final_Parallel_Project\\CSCI551_Final_Parallel_Project\\Debug\\vc143.pdb",
+                "Debug\\"
+            ],
+            "requires": []
+        }
+    ]
+}

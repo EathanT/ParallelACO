@@ -1,0 +1,65 @@
+﻿  Scanning sources for module dependencies...
+  main_headless.cpp
+  ACO.cpp
+  test.cpp
+  AntGraphics.cpp
+  Compiling...
+  ACO.cpp
+  test.cpp
+  AntGraphics.cpp
+  main_headless.cpp
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\Ant.h(57,26): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+  (compiling source file 'src/AntGraphics.cpp')
+  
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\Ant.h(78,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'src/AntGraphics.cpp')
+  
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(17,47): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(168,20): warning C4244: 'initializing': conversion from 'unsigned __int64' to 'float', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(170,56): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(170,38): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(171,99): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(171,85): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(171,64): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\Ant.h(57,26): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+  (compiling source file 'src/ACO.cpp')
+  
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\Ant.h(78,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'src/ACO.cpp')
+  
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(183,43): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(183,28): warning C4244: 'initializing': conversion from 'double' to 'const int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(184,39): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(184,28): warning C4244: 'initializing': conversion from 'int' to 'const float', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(189,34): warning C4244: 'initializing': conversion from 'size_t' to 'float', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(192,106): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(192,88): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(192,62): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(196,108): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(196,89): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(196,62): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(199,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(199,40): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(208,90): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(208,80): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(208,73): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(209,95): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(209,81): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(209,74): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(210,96): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(210,82): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(210,75): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\Ant.h(57,26): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\Ant.h(57,26): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+  (compiling source file 'src/main_headless.cpp')
+  
+  (compiling source file 'src/test.cpp')
+  
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\Ant.h(78,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'src/main_headless.cpp')
+  
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\ACO.cpp(122,13): warning C4849: OpenMP 'collapse' clause ignored in 'parallel for' directive
+C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\Ant.h(78,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'src/test.cpp')
+  
+  CSCI551_Final_Parallel_Project.vcxproj -> C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\x64\Debug\CSCI551_Final_Parallel_Project.exe

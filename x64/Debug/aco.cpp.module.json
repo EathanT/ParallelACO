@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\ACO.obj",
+            "outputs": [
+                "C:\\Users\\Eatha\\Documents\\Projects\\CSCI551_Final_Parallel_Project\\CSCI551_Final_Parallel_Project\\x64\\Debug\\vc143.pdb",
+                "x64\\Debug\\"
+            ],
+            "requires": []
+        }
+    ]
+}

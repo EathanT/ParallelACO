@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\ACO.obj",
+            "outputs": [
+                "x64\\Debug\\ACO.h_3C7B081C64F1A1DE.ifc.dt.module.json",
+                "x64\\Debug\\ACO.h_3C7B081C64F1A1DE.ifc.dt.d.json",
+                "x64\\Debug\\ACO.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Users\\Eatha\\Documents\\Projects\\CSCI551_Final_Parallel_Project\\CSCI551_Final_Parallel_Project\\src\\ACO.h",
+                    "source-path": "c:\\users\\eatha\\documents\\projects\\csci551_final_parallel_project\\csci551_final_parallel_project\\src\\aco.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}
