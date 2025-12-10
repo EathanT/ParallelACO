@@ -96,7 +96,7 @@ int main() {
     auto& ant = ants[currAnt];
 
     AntGraphics antGraphics(ants, aco.getPheromones(), aco.getProximity(),
-                            aco.getProbablitys(), cities, simSpeed, iterations);
+        aco.getProbablitys(), cities, simSpeed, iterations);
 
     bool visualizationComplete = false;
     int currIteration = 0;
@@ -107,58 +107,53 @@ int main() {
         BeginDrawing();
         if (currIteration != iterations) {
 
-        ClearBackground(RAYWHITE);
+            ClearBackground(RAYWHITE);
 
-        // Setup the ant at the start of a route
+            // Setup the ant at the start of a route
             if (ant->route.empty()) {
-                uniform_int_distribution<int> antStart(0, cities.size()-1);
-                ant->visitCity(cities[antStart(rng)]);
-                ant->position = ant->currCity->position;
+                uniform_int_distribution<int> antStart(0, (int)cities.size() - 1);
+                int startId = antStart(rng);
+                ant->startAt(startId);
+                ant->position = cities[startId]->position;
                 antGraphics.setAnt(ant);
             }
 
-            antGraphics.drawText(ant,currIteration);
-
-            /* antGraphics.restart(); */
+            antGraphics.drawText(ant, currIteration);
 
             // Reset or progress to the next ant upon completion
-            if (antGraphics.reachedTarget()){
-              
-              if(ant->route.size() != cities.size()+1){
-                //Next Steop on ant if route hasnt visted every city
-                aco.step(ant);
-              }else{
-                ant->clearCitys();
-                ++currAnt;
-                if (currAnt < numAnts) {
-                    ant = ants[currAnt];
-                } else {
-                    aco.updatePheromones();
-                    currAnt = 0;
-                    for(auto& antRes : ants){
-                      antRes->reset();
-                    }
-                    ant = ants[currAnt];
-                    currIteration++;
+            if (antGraphics.reachedTarget()) {
+
+                if ((int)ant->route.size() != (int)cities.size() + 1) {
+                    // Next step on ant if route hasn't visited every city
+                    aco.step(ant);
                 }
-              }
+                else {
+                    // Finished this ant's tour
+                    ++currAnt;
+                    if (currAnt < numAnts) {
+                        ant = ants[currAnt];
+                    }
+                    else {
+                        aco.updatePheromones();
+                        currAnt = 0;
+                        for (auto& antRes : ants) {
+                            antRes->reset();
+                        }
+                        ant = ants[currAnt];
+                        currIteration++;
+                    }
+                }
             }
 
             antGraphics.Update(deltaTime);
-            antGraphics.RenderScene(); 
-
-
+            antGraphics.RenderScene();
         }
 
-
         EndDrawing();
-
     }
 
-    // De-Initialization
     CloseWindow();
 
-
-    compareACOBestRoute(cities,aco.getPheromones()); 
+    compareACOBestRoute(cities, aco.getPheromones());
     return 0;
 }

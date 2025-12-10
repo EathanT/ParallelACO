@@ -1,28 +1,34 @@
     #include "AntGraphics.h"
 
    // Draw text related to the current state of the ant
-    void AntGraphics::drawText(shared_ptr<Ant>& ant,int currInt) { 
-        string ACOAnt = "ACO On Ant: " + to_string(ant->id);
-        string currIteration = "Iteration: " + to_string(currInt) + " / " + to_string(iterations);
+void AntGraphics::drawText(shared_ptr<Ant>& ant, int currInt) {
+    string ACOAnt = "ACO On Ant: " + to_string(ant->id);
+    string currIteration = "Iteration: " + to_string(currInt) + " / " + to_string(iterations);
 
-        DrawText(ACOAnt.c_str(), 10, 10, 20, DARKGRAY); 
-        DrawText(currIteration.c_str(), 10, 30, 20, DARKGRAY);
-        
-        string antsRoute = "Current Ant Route: [";
-        for (auto city : ant->route) {
-            string cityText = to_string(city->id);
-            antsRoute += cityText + ", ";
-        }
-        antsRoute += "]";
-        DrawText(antsRoute.c_str(), 10, HEIGHT/1.5, 20, DARKGRAY);
+    DrawText(ACOAnt.c_str(), 10, 10, 20, DARKGRAY);
+    DrawText(currIteration.c_str(), 10, 30, 20, DARKGRAY);
+
+    string antsRoute = "Current Ant Route: [";
+    for (int cityIdx : ant->route) {
+        string cityText = to_string(cities[cityIdx]->id);
+        antsRoute += cityText + ", ";
     }
+    antsRoute += "]";
+    DrawText(antsRoute.c_str(), 10, HEIGHT / 1.5f, 20, DARKGRAY);
+}
 
     // Set the current ant for rendering
-    void AntGraphics::setAnt(shared_ptr<Ant> newAnt) {
-        currAnt = newAnt;
-        currCity = newAnt->currCity;
+void AntGraphics::setAnt(shared_ptr<Ant> newAnt) {
+    currAnt = newAnt;
+    if (currAnt && currAnt->currCityId >= 0 &&
+        currAnt->currCityId < (int)cities.size()) {
+        currCity = cities[currAnt->currCityId];
     }
-    
+    else {
+        currCity.reset();
+    }
+}
+
     // Get current position of the ant
     Vector2 AntGraphics::getPosition() const {
         return currAnt->position;
@@ -35,12 +41,17 @@
 
     // Update ant's position and state based on time delta
     void AntGraphics::Update(float delta) {
-	// Clmap in case of frame go bad
-	if(delta > 1.0f/20.0f)
-		delta = 1.0f/20.f;
+        // Clamp in case a frame goes bad
+        if (delta > 1.0f / 20.0f)
+            delta = 1.0f / 20.0f;
 
-        currCity = currAnt->currCity;
-        moveToNextPoint(delta);
+        if (!currAnt) return;
+
+        if (currAnt->currCityId >= 0 &&
+            currAnt->currCityId < (int)cities.size()) {
+            currCity = cities[currAnt->currCityId];
+            moveToNextPoint(delta);
+        }
     }
 
     // Render the full scene including cities and ant
@@ -52,10 +63,17 @@
 
     // Check if the ant has reached its target
     bool AntGraphics::reachedTarget() {
-        Vector2 target = currCity->position;
-        Vector2 direction = {target.x - currAnt->position.x, target.y - currAnt->position.y};
-        float length = sqrt(pow(direction.x, 2.0f) + pow(direction.y, 2.0f));
-        return length < 2;
+        if (!currAnt || currAnt->currCityId < 0 ||
+            currAnt->currCityId >= (int)cities.size()) {
+            return true; // nothing to move to
+        }
+
+        Vector2 target = cities[currAnt->currCityId]->position;
+        Vector2 direction = { target.x - currAnt->position.x,
+                              target.y - currAnt->position.y };
+        float length = sqrtf(direction.x * direction.x +
+            direction.y * direction.y);
+        return length < 2.0f;
     }
 
     // Restart Button in Development
@@ -119,49 +137,52 @@
     
     // Move the ant towards the next point
     void AntGraphics::moveToNextPoint(float delta) {
-        Vector2 target = currCity->position;
-	Vector2 toTarget = {target.x - currAnt->position.x, target.y - currAnt->position.y};
-	float dist = lengthVec(toTarget);
+        if (!currAnt || currAnt->currCityId < 0 ||
+            currAnt->currCityId >= (int)cities.size()) {
+            return;
+        }
 
-	// Speed slows as we enter the slowRadius
-	float desiredSpeed = maxSpeed;
-	if(dist < slowRadius)
-		desiredSpeed = maxSpeed * (dist / slowRadius);
-	
-	Vector2 desiredVel = {0,0};
-	if(dist > 0.0001f) {
-		Vector2 dir = normVec(toTarget);
-		desiredVel = {dir.x * desiredSpeed, dir.y * desiredSpeed};
-	}
+        Vector2 target = cities[currAnt->currCityId]->position;
+        Vector2 toTarget = { target.x - currAnt->position.x,
+                             target.y - currAnt->position.y };
+        float dist = lengthVec(toTarget);
 
-	// Steering = change in velocity, limited by maxAccel
-	Vector2 steer = {desiredVel.x - velocity.x, desiredVel.y - velocity.y};
-	steer = clampMag(steer,maxAccel * delta);
+        float desiredSpeed = maxSpeed;
+        if (dist < slowRadius)
+            desiredSpeed = maxSpeed * (dist / slowRadius);
 
-	// Integrate velocity and position
-	velocity = {velocity.x + steer.x, velocity.y + steer.y};
-	currAnt->position = {currAnt->position.x + velocity.x * delta,
-			     currAnt->position.y + velocity.y * delta};
+        Vector2 desiredVel = { 0, 0 };
+        if (dist > 0.0001f) {
+            Vector2 dir = normVec(toTarget);
+            desiredVel = { dir.x * desiredSpeed, dir.y * desiredSpeed };
+        }
 
-	// Stop cleanly when inside stopRadius and nearly stopped
-	if(dist < stopRadius && lengthVec(velocity) < 10.0f){
-		currAnt->position = target;
-		velocity = {0,0};
-	}
+        Vector2 steer = { desiredVel.x - velocity.x,
+                          desiredVel.y - velocity.y };
+        steer = clampMag(steer, maxAccel * delta);
 
+        velocity = { velocity.x + steer.x,
+                     velocity.y + steer.y };
+        currAnt->position = { currAnt->position.x + velocity.x * delta,
+                              currAnt->position.y + velocity.y * delta };
 
-	// Smoothy rotate to face velocity (if moving)
-	float targetRot = currentRotation;
-	float vlen = lengthVec(velocity);
-	if(vlen > 0.1f){
-		targetRot = atan2f(velocity.y, velocity.x) * (180.0f / (float)PI) + 90.0f;
-	}
+        if (dist < stopRadius && lengthVec(velocity) < 10.0f) {
+            currAnt->position = target;
+            velocity = { 0, 0 };
+        }
 
-	// Exponentialish smoothing: larger dt -> bigger catch u 
-	float rotT = 1.0f - powf(0.0001f,delta); // tweak factor (0.0001-0.01)
-	currentRotation = lerpAngleDeg(currentRotation, targetRot, rotT);
+        float targetRot = currentRotation;
+        float vlen = lengthVec(velocity);
+        if (vlen > 0.1f) {
+            targetRot = atan2f(velocity.y, velocity.x) *
+                (180.0f / (float)PI) + 90.0f;
+        }
 
+        float rotT = 1.0f - powf(0.0001f, delta);
+        currentRotation = lerpAngleDeg(currentRotation, targetRot, rotT);
     }
+
+
    
     // Render the graph of cities
     void AntGraphics::RenderCityGraph() {

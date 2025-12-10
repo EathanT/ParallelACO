@@ -1,5 +1,5 @@
-#define ENABLE_PARALLEL 1
-#define PARALLEL_PHEROMONES 1
+#define ENABLE_PARALLEL 0
+#define PARALLEL_PHEROMONES 0
 
 #ifndef ANT_H
 #define ANT_H
@@ -16,6 +16,7 @@
 #include <cstddef>
 #include <ctime>
 #include <filesystem>
+#include <cstdint>  // for uint8_t
 
 #include "raylib.h"
 
@@ -23,72 +24,85 @@
 #include <omp.h>
 #endif
 
-
 using namespace std;
 
 // Structure to represent a city in the simulation
 struct city {
-    int id; // Unique identifier for the city
-    bool visited; // Flag to check if the city has been visited by an ant
-    Vector2 position; // Position of the city in a 2D space
+    int    id;       // Unique identifier for the city
+    bool   visited;  // NOTE: no longer mutated after construction
+    Vector2 position;
 
-    // Constructor to initialize a city with an ID, visited status, and position
-    city(int cityId, bool visitedIn, Vector2 positionIn) : id(cityId), visited(visitedIn), position(positionIn) {}
+    city(int cityId, bool visitedIn, Vector2 positionIn)
+        : id(cityId), visited(visitedIn), position(positionIn) {
+    }
 };
 
 // Class to represent an ant in the simulation
 class Ant {
 public:
 
-    // Constructor to initialize an ant with a unique ID and default route length
-    Ant(int antId) : routeLength(0), id(antId) {}
-
-    // Visits a specified city
-    // Marks the city as visited, updates the current city, and appends it to the route
-    void visitCity(shared_ptr<city> c){
-      currCity = c;
-      currCity->visited = true;
-      route.push_back(currCity);
+    // Constructor: need to know number of cities to size the visited array
+    Ant(int antId, std::size_t numCities)
+        : position{ 0.0f, 0.0f },
+        routeLength(0.0f),
+        currCityId(-1),
+        id(antId),
+        visited(numCities, 0) {
     }
 
-    // Visits the current city
-    // Marks the current city as visited and appends it to the route
-    void visitCity(){
-      routeLength += sqrt(pow((currCity->position.x - route.back()->position.x),2) + 
-                          pow((currCity->position.y - route.back()->position.y),2));
-      cout << routeLength << endl;
-      route.push_back(currCity);
-      
+    // Start a new tour at the given city
+    void startAt(int cityId) {
+        reset();
+        currCityId = cityId;
+        route.push_back(cityId);
+        if (cityId >= 0 && cityId < (int)visited.size()) {
+            visited[cityId] = 1;
+        }
     }
 
-    // Checks if a city has been visited by the ant
-    // Returns true if the city with the specified ID is found in the route
-    bool hasVisited(int cityId){
-      for(const auto& visitedCity : route){
-        if(visitedCity->id == cityId)
-          return true;
-      }
-      return false;
+    // Move from the current city to cityId and update route length
+    void moveTo(int cityId, const std::vector<std::shared_ptr<city>>& cities) {
+        int prevId = currCityId;
+        currCityId = cityId;
+        route.push_back(cityId);
+
+        if (cityId >= 0 && cityId < (int)visited.size()) {
+            visited[cityId] = 1;
+        }
+
+        if (prevId >= 0) {
+            Vector2 a = cities[prevId]->position;
+            Vector2 b = cities[cityId]->position;
+            float dx = a.x - b.x;
+            float dy = a.y - b.y;
+            routeLength += std::sqrt(dx * dx + dy * dy);
+        }
     }
 
-    // Resets all of the ant's values
-    // Clears the route and sets all visited flags to false
-    void reset(){
-      route.clear();
-      routeLength = 0.0f;
+    // O(1) visited check
+    bool hasVisited(int cityId) const {
+        return (cityId >= 0 && cityId < (int)visited.size())
+            ? (visited[cityId] != 0)
+            : false;
     }
 
-    void clearCitys(){
-      for(auto& city : route)
-        city->visited = false;
-
+    // Reset all state for reuse
+    void reset() {
+        route.clear();
+        routeLength = 0.0f;
+        currCityId = -1;
+        std::fill(visited.begin(), visited.end(), 0);
     }
 
-    vector<shared_ptr<city>> route; // Vector to store the route taken by the ant
-    Vector2 position; // Current position of the ant in 2D space
-    int routeLength; // Length of the route taken by the ant
-    shared_ptr<city> currCity; // Pointer to the current city being visited by the ant
-    int id; // Unique identifier for the ant
+    // Public fields used by the rest of the code
+    std::vector<int> route;   // indices into global cities[]
+    Vector2          position;
+    float            routeLength;
+    int              currCityId; // current city index
+    int              id;
+
+private:
+    std::vector<uint8_t> visited; // per-city visited flags
 };
 
 #endif

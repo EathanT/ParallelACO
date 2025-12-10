@@ -68,13 +68,13 @@ class AntGraphics {
 
         float speed{500.0f}; // Simulation speed
     private:
-        float currentRotation{0.0f};
+        float currentRotation{ 0.0f };
         shared_ptr<Ant> currAnt;
-        shared_ptr<city> currCity;
-        vector<shared_ptr<Ant>>& ants;  
+        shared_ptr<city> currCity;   // now derived from currAnt->currCityId
+        vector<shared_ptr<Ant>>& ants;
         vector<vector<float>>& pheromones;
         vector<vector<float>>& proximitys;
-        vector<vector<float>>& probablitys;
+        vector<vector<float>>& probablitys; 
         vector<shared_ptr<city>> cities;
         Texture2D antTexture;
         int iterations;
