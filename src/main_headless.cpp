@@ -5,9 +5,9 @@
 #include "test.h"
 
 int main() {
-    int   numAnts = 75;
+    int   numAnts = 100;
     int   numberOfCities = 75;
-    int   iterations = 300;
+    int   iterations = 100;
     float Q = 100.0f;
     float evaporationRate = 0.5f;
     float alpha = 1.0f;
@@ -34,6 +34,11 @@ int main() {
     auto t_start = clock_type::now();
 
 #if ENABLE_PARALLEL
+
+#if defined(ACO_NUM_THREADS) && (ACO_NUM_THREADS > 0)
+    omp_set_num_threads(ACO_NUM_THREADS);
+#endif
+
 #pragma omp parallel
     {
         std::mt19937 threadGen(12345 + omp_get_thread_num());

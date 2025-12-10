@@ -1,12 +1,12 @@
 ﻿  Scanning sources for module dependencies...
-  AntGraphics.cpp
   ACO.cpp
   main_headless.cpp
   test.cpp
-  Compiling...
-  test.cpp
   AntGraphics.cpp
+  Compiling...
   main_headless.cpp
+  AntGraphics.cpp
+  test.cpp
   ACO.cpp
 C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(17,44): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
 C:\Users\Eatha\Documents\Projects\CSCI551_Final_Parallel_Project\CSCI551_Final_Parallel_Project\src\AntGraphics.cpp(189,20): warning C4244: 'initializing': conversion from 'unsigned __int64' to 'float', possible loss of data

@@ -1,5 +1,6 @@
 #define ENABLE_PARALLEL 0
 #define PARALLEL_PHEROMONES 0
+#define ACO_NUM_THREADS 15
 
 #ifndef ANT_H
 #define ANT_H
