@@ -1,128 +1,70 @@
-// Toggle parallelization:
-
+﻿#include "ACO.h"
 #include "Ant.h"
-#include "ACO.h"
 #include "test.h"
 
-int main() {
-    int   numAnts = 100;
-    int   numberOfCities = 75;
-    int   iterations = 100;
-    float Q = 100.0f;
-    float evaporationRate = 0.5f;
-    float alpha = 1.0f;
-    float beta = 5.0f;
+#include <chrono>
+#include <cstdlib>
+#include <iostream>
 
-    // Generate random cities
-    std::vector<std::shared_ptr<city>> cities;
-    std::mt19937 gen(12345);
-    std::uniform_real_distribution<float> dist(0.0f, 1000.0f);
+int main(int argc, char** argv) {
+    using clock = std::chrono::high_resolution_clock;
 
-    for (int i = 0; i < numberOfCities; ++i) {
-        Vector2 pos{ dist(gen), dist(gen) };
-        cities.push_back(std::make_shared<city>(i, false, pos));
+    // Basic configuration
+    std::size_t width = 1024;
+    std::size_t height = 1024;
+    int steps = 500;
+    float alpha = 0.24f;
+
+    if (argc >= 4) {
+        width = static_cast<std::size_t>(std::strtoul(argv[1], nullptr, 10));
+        height = static_cast<std::size_t>(std::strtoul(argv[2], nullptr, 10));
+        steps = std::atoi(argv[3]);
     }
 
-    // Build ACO object
-    ACO aco(cities, numAnts, Q, evaporationRate);
-    aco.setAlpha(alpha);
-    aco.setBeta(beta);
-
-    auto& ants = aco.getAnts();
-
-    using clock_type = std::chrono::steady_clock;
-    auto t_start = clock_type::now();
-
-#if ENABLE_PARALLEL
-
-#if defined(ACO_NUM_THREADS) && (ACO_NUM_THREADS > 0)
-    omp_set_num_threads(ACO_NUM_THREADS);
-#endif
-
-#pragma omp parallel
-    {
-        std::mt19937 threadGen(12345 + omp_get_thread_num());
-        std::uniform_int_distribution<int> startDist(0, numberOfCities - 1);
-        std::uniform_real_distribution<float> uni01(0.0f, 1.0f);
-
-        std::vector<float> localProb(numberOfCities);
-
-        for (int it = 0; it < iterations; ++it) {
-
-#pragma omp for schedule(static)
-            for (int antIndex = 0;
-                antIndex < static_cast<int>(ants.size());
-                ++antIndex) {
-                auto& ant = ants[antIndex];
-
-                int start = startDist(threadGen);
-                ant->startAt(start);
-
-                while (static_cast<int>(ant->route.size()) < numberOfCities + 1) {
-                    float u = uni01(threadGen);
-                    int nextIdx = aco.selectNextCity(ant, &localProb, u);
-                    ant->moveTo(nextIdx, cities);
-                }
-            }
-
-#pragma omp single
-            {
-                aco.updatePheromones();
-                for (auto& ant : ants) {
-                    ant->reset();
-                }
-            }
-
-#pragma omp barrier
-        }
+    std::cout << "Running correctness test first...\n";
+    bool testsOk = runAllTests();
+    if (!testsOk) {
+        std::cerr << "Warning: parallel results differ from sequential.\n";
     }
+
+    HeatSimulation base(width, height, alpha);
+    base.initializeHotSpot(width / 2.0f,
+        height / 2.0f,
+        width / 6.0f,
+        100.0f);
+
+    HeatSimulation seq = base;
+    HeatSimulation par = base;
+
+    std::cout << "Grid: " << width << " x " << height
+        << ", steps: " << steps << '\n';
+
+    // Sequential timing
+    auto t0 = clock::now();
+    for (int i = 0; i < steps; ++i) {
+        seq.stepSequential();
+    }
+    auto t1 = clock::now();
+
+    // Parallel timing
+    auto t2 = clock::now();
+    for (int i = 0; i < steps; ++i) {
+        par.stepParallel();
+    }
+    auto t3 = clock::now();
+
+    auto seqMs = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
+    auto parMs = std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count();
+
+    std::cout << "Sequential time: " << seqMs << " ms\n";
+    std::cout << "Parallel time:   " << parMs << " ms\n";
+
+#if ENABLE_PARALLEL && defined(_OPENMP)
+    std::cout << "OpenMP is enabled (ENABLE_PARALLEL=" << ENABLE_PARALLEL
+        << ", HEAT_NUM_THREADS=" << HEAT_NUM_THREADS << ").\n";
 #else
-    for (int it = 0; it < iterations; ++it) {
-        for (auto& ant : ants) {
-            int start = std::uniform_int_distribution<int>(
-                0, numberOfCities - 1
-            )(gen);
-
-            ant->startAt(start);
-
-            while (static_cast<int>(ant->route.size()) < numberOfCities + 1) {
-                int nextIdx = aco.selectNextCity(ant);
-                ant->moveTo(nextIdx, cities);
-            }
-        }
-
-        aco.updatePheromones();
-
-        for (auto& ant : ants) {
-            ant->reset();
-        }
-    }
+    std::cout << "OpenMP is NOT enabled; parallel path falls back to sequential.\n";
 #endif
 
-    auto t_end = clock_type::now();
-    std::chrono::duration<double> elapsed = t_end - t_start;
-
-#if ENABLE_PARALLEL
-    int threads_used = omp_get_max_threads();
-#else
-    int threads_used = 1;
-#endif
-
-    std::cout << "Total execution time (headless, "
-#if ENABLE_PARALLEL
-        << "OpenMP, threads=" << threads_used
-#else
-        << "sequential"
-#endif
-        << "): " << elapsed.count() << " s\n";
-
-    if (numberOfCities <= 10) {
-        compareACOBestRoute(cities, aco.getPheromones());
-    }
-    else {
-        std::cout << "Skipping brute-force TSP check for n = "
-            << numberOfCities << " (too large).\n";
-    }
-
-    return 0;
+    return testsOk ? 0 : 1;
 }

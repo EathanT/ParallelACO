@@ -1,159 +1,50 @@
-#include "Ant.h"
+﻿#include "ACO.h"
 #include "AntGraphics.h"
-#include "ACO.h"
-#include "test.h"
+#include "Ant.h"
+
+#include "raylib.h"
 
 int main() {
+    // Window configuration
+    const int windowWidth = 1000;
+    const int windowHeight = 800;
 
-    
-    SetTraceLogLevel(LOG_ERROR);
-    int numAnts = 10;  // Default number of ants
-    int numberOfCities = 10; // Default number of cities
-    float simSpeed = 20 * numberOfCities; // Default simulation speed based on number of cities
-    float speedSelect = 1;
-    float newQ = 100;
-    float newEvaporationRate = 0.5;
-    float dAlpha = 1;
-    float dBeta = 5;
-    int iterations = 5;
-
-    string customize = "no";
-    cout << "Do you want to customize options?(yes or no)" << endl;
-    cin >> customize;
-    transform(customize.begin(), customize.end(),customize.begin(),::tolower);
-
-
-    // User input to customize the simulation
-    if(customize == "yes"){
-    cout << "How many ants do you want?" << endl;
-    cin >> numAnts; 
-    
-    cout << "How many cities do you want?" << endl;
-    cin >> numberOfCities; 
-    
-    cout << "How fast do you want your sim? (1 is normal speed)" << endl;
-    cin >> speedSelect;
-    simSpeed *= speedSelect;
-    
-    cout <<"What do you want your Q to be?(100 is normal)" << endl;
-    cin >> newQ;
-    
-    cout <<"What do you want your Evaporation Rate to be?(0.5 is normal)" << endl;
-    cin >> newEvaporationRate;
-    
-    cout << "What value do you want your alpha?(1 is normal)" << endl;
-    cin >> dAlpha;
-   
-    cout << "What value do you want your beta?(5 is normal)" << endl;
-    cin >> dBeta;
-   
-    cout <<"How many iterations do you want?" << endl;
-    cin >> iterations;
-    }else{
-      simSpeed *= 5;
-    }
-    
-
-    vector<shared_ptr<city>> cities;
-    const float margin = 1000 / numberOfCities; // Minimum space between cities
-    uniform_real_distribution<> dis_width(0, (WIDTH / 2));
-    uniform_real_distribution<> dis_height(0, (HEIGHT / 2));
-
-    // Generate cities with unique random positions
-    for (int i = 0; i < numberOfCities; ++i) {
-        float x = dis_width(rng) + 10;
-        float y = dis_height(rng) + 10;
-        bool passCheck = false;
-
-        while (!passCheck) {
-            passCheck = true;
-            for (int j = 0; j < i; j++) {
-                auto otherCity = cities[j];
-                float length = sqrt(pow((otherCity->position.x - x), 2)
-                    + pow((otherCity->position.y - y), 2));
-                if (length < margin) {
-                    passCheck = false;
-                    x = dis_width(rng) + 10;
-                    y = dis_height(rng) + 10;
-                }
-            }
-        }
-        Vector2 randomPos = {x, y};
-        cities.push_back(make_shared<city>(i, false, randomPos));
-    }
-
-    // Setup Ant Colony Optimization (ACO) instance
-    ACO aco(cities, numAnts,newQ,newEvaporationRate);
-    aco.setAlpha(dAlpha);
-    aco.setBeta(dBeta);
-
-    // Initialize window for visualization
-    InitWindow(WIDTH, HEIGHT, "ACO Path Visualization");
+    InitWindow(windowWidth, windowHeight, "2D Heat Diffusion - raylib");
     SetTargetFPS(60);
 
-    vector<shared_ptr<Ant>> ants = aco.getAnts();
-    int currAnt = 0;
-    auto& ant = ants[currAnt];
+    // Simulation configuration
+    const std::size_t gridWidth = 200;
+    const std::size_t gridHeight = 160;
+    const float alpha = 0.24f;
 
-    AntGraphics antGraphics(ants, aco.getPheromones(), aco.getProximity(),
-        aco.getProbablitys(), cities, simSpeed, iterations);
+    HeatSimulation simulation(gridWidth, gridHeight, alpha);
+    simulation.initializeHotSpot(gridWidth / 2.0f,
+        gridHeight / 2.0f,
+        gridWidth / 5.0f,
+        100.0f);
 
-    bool visualizationComplete = false;
-    int currIteration = 0;
+    HeatRaylibRenderer renderer(windowWidth, windowHeight, 0.0f, 100.0f);
 
-    // Main game loop
+    int stepsPerFrame = 1; // increase for faster diffusion
+
     while (!WindowShouldClose()) {
-        float deltaTime = GetFrameTime();
-        BeginDrawing();
-        if (currIteration != iterations) {
-
-            ClearBackground(RAYWHITE);
-
-            // Setup the ant at the start of a route
-            if (ant->route.empty()) {
-                uniform_int_distribution<int> antStart(0, (int)cities.size() - 1);
-                int startId = antStart(rng);
-                ant->startAt(startId);
-                ant->position = cities[startId]->position;
-                antGraphics.setAnt(ant);
-            }
-
-            antGraphics.drawText(ant, currIteration);
-
-            // Reset or progress to the next ant upon completion
-            if (antGraphics.reachedTarget()) {
-
-                if ((int)ant->route.size() != (int)cities.size() + 1) {
-                    // Next step on ant if route hasn't visited every city
-                    aco.step(ant);
-                }
-                else {
-                    // Finished this ant's tour
-                    ++currAnt;
-                    if (currAnt < numAnts) {
-                        ant = ants[currAnt];
-                    }
-                    else {
-                        aco.updatePheromones();
-                        currAnt = 0;
-                        for (auto& antRes : ants) {
-                            antRes->reset();
-                        }
-                        ant = ants[currAnt];
-                        currIteration++;
-                    }
-                }
-            }
-
-            antGraphics.Update(deltaTime);
-            antGraphics.RenderScene();
+        // Update
+        for (int i = 0; i < stepsPerFrame; ++i) {
+            simulation.stepParallel();
         }
+
+        // Draw
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        renderer.draw(simulation);
+
+        DrawText("2D Heat Diffusion (raylib, parallel)", 10, 10, 20, RAYWHITE);
+        DrawText("ESC to quit", 10, 35, 16, RAYWHITE);
 
         EndDrawing();
     }
 
     CloseWindow();
-
-    compareACOBestRoute(cities, aco.getPheromones());
     return 0;
 }

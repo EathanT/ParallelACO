@@ -1,263 +1,58 @@
-    #include "AntGraphics.h"
+// AntGraphics.cpp
+#include "AntGraphics.h"
 
-   // Draw text related to the current state of the ant
-void AntGraphics::drawText(shared_ptr<Ant>& ant, int currInt) {
-    string ACOAnt = "ACO On Ant: " + to_string(ant->id);
-    string currIteration = "Iteration: " + to_string(currInt) + " / " + to_string(iterations);
+#include "ACO.h"
+#include "Ant.h"
 
-    DrawText(ACOAnt.c_str(), 10, 10, 20, DARKGRAY);
-    DrawText(currIteration.c_str(), 10, 30, 20, DARKGRAY);
+#include <algorithm>
+#include <cstddef>
+#include <cmath>
 
-    string antsRoute = "Current Ant Route: [";
-    for (int cityIdx : ant->route) {
-        string cityText = to_string(cities[cityIdx]->id);
-        antsRoute += cityText + ", ";
-    }
-    antsRoute += "]";
-    DrawText(antsRoute.c_str(), 10, HEIGHT / 1.5f, 20, DARKGRAY);
-}
+#include "raylib.h"
 
-    // Set the current ant for rendering
-void AntGraphics::setAnt(shared_ptr<Ant> newAnt) {
-    currAnt = newAnt;
-    if (currAnt && currAnt->currCityId >= 0 &&
-        currAnt->currCityId < (int)cities.size()) {
-        currCity = cities[currAnt->currCityId];
-    }
-    else {
-        currCity.reset();
+HeatRaylibRenderer::HeatRaylibRenderer(int windowWidth_,
+    int windowHeight_,
+    float minTemperature,
+    float maxTemperature)
+    : windowWidth(windowWidth_),
+    windowHeight(windowHeight_),
+    minTemp(minTemperature),
+    maxTemp(maxTemperature) {
+    if (maxTemp <= minTemp) {
+        maxTemp = minTemp + 1.0f;
     }
 }
 
-    // Get current position of the ant
-    Vector2 AntGraphics::getPosition() const {
-        return currAnt->position;
+void HeatRaylibRenderer::draw(const HeatSimulation& simulation) const {
+    const HeatGrid& grid = simulation.grid();
+
+    if (grid.width == 0 || grid.height == 0) {
+        return;
     }
 
-    // Set position of the ant
-    void AntGraphics::setPosition(const Vector2& pos) {
-        currAnt->position = pos;
-    }
+    float cellWf = static_cast<float>(windowWidth) / static_cast<float>(grid.width);
+    float cellHf = static_cast<float>(windowHeight) / static_cast<float>(grid.height);
 
-    // Update ant's position and state based on time delta
-    void AntGraphics::Update(float delta) {
-        // Clamp in case a frame goes bad
-        if (delta > 1.0f / 20.0f)
-            delta = 1.0f / 20.0f;
+    for (std::size_t y = 0; y < grid.height; ++y) {
+        for (std::size_t x = 0; x < grid.width; ++x) {
+            float t = grid(x, y);
+            float clamped = std::max(minTemp, std::min(maxTemp, t));
+            float normalized = (clamped - minTemp) / (maxTemp - minTemp);
 
-        if (!currAnt) return;
+            // Simple blue -> red gradient
+            float n = std::clamp(normalized, 0.0f, 1.0f);
+            unsigned char r = static_cast<unsigned char>(255.0f * n);
+            unsigned char g = 0;
+            unsigned char b = static_cast<unsigned char>(255.0f * (1.0f - n));
 
-        if (currAnt->currCityId >= 0 &&
-            currAnt->currCityId < (int)cities.size()) {
-            currCity = cities[currAnt->currCityId];
-            moveToNextPoint(delta);
+            Color color{ r, g, b, 255 };
+
+            int px = static_cast<int>(x * cellWf);
+            int py = static_cast<int>(y * cellHf);
+            int pw = static_cast<int>(cellWf + 1.0f);
+            int ph = static_cast<int>(cellHf + 1.0f);
+
+            DrawRectangle(px, py, pw, ph, color);
         }
     }
-
-    // Render the full scene including cities and ant
-    void AntGraphics::RenderScene() {
-        RenderCityGraph();
-        DrawAnt();
-        DrawMatrices();
-    }
-
-    // Check if the ant has reached its target
-    bool AntGraphics::reachedTarget() {
-        if (!currAnt || currAnt->currCityId < 0 ||
-            currAnt->currCityId >= (int)cities.size()) {
-            return true; // nothing to move to
-        }
-
-        Vector2 target = cities[currAnt->currCityId]->position;
-        Vector2 direction = { target.x - currAnt->position.x,
-                              target.y - currAnt->position.y };
-        float length = sqrtf(direction.x * direction.x +
-            direction.y * direction.y);
-        return length < 2.0f;
-    }
-
-    // Restart Button in Development
-    /* 
-    void AntGraphics::restart(){
-
-      int buttonWidth = 60;
-      int buttonHeight = 40;
-      int buttonX = 30;
-      int buttonY = (HEIGHT / 1.5) + 30;
-
-      DrawRectangleLines(buttonX, buttonY, buttonWidth, buttonHeight, BLACK);
-
-      DrawText("Restart",buttonX + (buttonWidth/2),buttonY + (buttonHeight/2), 10, RED);
-      
-    }
-    */
-    
-    // Check and validate the resource paths and availability
-    bool AntGraphics::checkAndValidateResources() {
-        string directoryPath = "./resources/";
-        string antImagePath = directoryPath + "ant.png";
-
-        if (!checkDirectoryExists(directoryPath) || !checkFileExists(antImagePath)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // Load the ant image from resources
-    Image AntGraphics::loadAntImage() {
-        string antImagePath = "./resources/ant.png";
-        Image fullAntImage = LoadImage(antImagePath.c_str());
-
-        if (!fullAntImage.data) {
-            throw runtime_error("Failed to load Image");
-        }
-
-        Rectangle section = {17, 320, 52, 64};
-        Image antImage = ImageFromImage(fullAntImage, section);
-
-        if (!antImage.data) {
-            throw runtime_error("Failed to load image section");
-        }
-
-        return antImage;
-    }
-
-    // Prepare the texture from image for rendering
-    void AntGraphics::prepareTexture(const Image& antImage) {
-        Image antResized = antImage;
-        ImageResize(&antResized, (52 / 3), (64 / 3)); // Resizing the ant image
-        ImageColorReplace(&antResized, WHITE, RAYWHITE);
-
-        antTexture = LoadTextureFromImage(antResized);
-        if (antTexture.id == 0) {
-            throw runtime_error("Failed to load texture from image.");
-        }
-    }
-    
-    // Move the ant towards the next point
-    void AntGraphics::moveToNextPoint(float delta) {
-        if (!currAnt || currAnt->currCityId < 0 ||
-            currAnt->currCityId >= (int)cities.size()) {
-            return;
-        }
-
-        Vector2 target = cities[currAnt->currCityId]->position;
-        Vector2 toTarget = { target.x - currAnt->position.x,
-                             target.y - currAnt->position.y };
-        float dist = lengthVec(toTarget);
-
-        float desiredSpeed = maxSpeed;
-        if (dist < slowRadius)
-            desiredSpeed = maxSpeed * (dist / slowRadius);
-
-        Vector2 desiredVel = { 0, 0 };
-        if (dist > 0.0001f) {
-            Vector2 dir = normVec(toTarget);
-            desiredVel = { dir.x * desiredSpeed, dir.y * desiredSpeed };
-        }
-
-        Vector2 steer = { desiredVel.x - velocity.x,
-                          desiredVel.y - velocity.y };
-        steer = clampMag(steer, maxAccel * delta);
-
-        velocity = { velocity.x + steer.x,
-                     velocity.y + steer.y };
-        currAnt->position = { currAnt->position.x + velocity.x * delta,
-                              currAnt->position.y + velocity.y * delta };
-
-        if (dist < stopRadius && lengthVec(velocity) < 10.0f) {
-            currAnt->position = target;
-            velocity = { 0, 0 };
-        }
-
-        float targetRot = currentRotation;
-        float vlen = lengthVec(velocity);
-        if (vlen > 0.1f) {
-            targetRot = atan2f(velocity.y, velocity.x) *
-                (180.0f / (float)PI) + 90.0f;
-        }
-
-        float rotT = 1.0f - powf(0.0001f, delta);
-        currentRotation = lerpAngleDeg(currentRotation, targetRot, rotT);
-    }
-
-
-   
-    // Render the graph of cities
-    void AntGraphics::RenderCityGraph() {
-        float size = (WIDTH / (20 * cities.size()));
-        for(const auto& city : cities) {
-            DrawCircle(city->position.x, city->position.y, size, BLUE);
-            DrawText(TextFormat("%d", city->id), city->position.x, city->position.y - (size * 2), size, BLACK);
-        }
-
-        for (size_t i = 0; i < cities.size() - 1; ++i) {
-            for (size_t j = i + 1; j < cities.size(); ++j) {
-                DrawLineEx(cities[i]->position, cities[j]->position, pheromones[i][j] * size, PATHGREEN);
-            }
-        }
-    }
-
-    // Draw matrices related to proximity, pheromones, and probabilities
-    void AntGraphics::DrawMatrices() {
-        const int cellSize = (WIDTH - 40) / (cities.size() * 2.15); 
-        const float margin = cellSize / 10;
-        for (size_t i = 0; i < proximitys.size(); ++i) {
-            for (size_t j = 0; j < proximitys[i].size(); ++j) {
-                if (i > j) {
-                    float startX = (WIDTH / 2.0f) + i * cellSize;
-                    float startY = (50) + j * cellSize;
-
-                    if (j == 0) {
-                        DrawText(TextFormat("%d", i), startX + (cellSize * .5), startY - (margin * 1.1), margin, BLACK);
-                    }
-
-                    if (i == proximitys.size() - 1) {
-                        DrawText(TextFormat("%d", j), startX + (cellSize * 1.1), startY + (cellSize * .5), margin, BLACK);
-                    }
-
-                    DrawRectangleLines(startX, startY, cellSize, cellSize, BLACK);
-                    DrawMatrixElements(startX, startY, i, j, cellSize, margin);
-                }
-            }
-        }
-    }
-    
-    // Draw individual matrix elements
-    void AntGraphics::DrawMatrixElements(float x, float y, size_t i, size_t j, const int cellSize, const float margin) {
-        DrawText(TextFormat("Proximity:\n\t %.3f", proximitys[i][j]), x + 5, y + margin, margin, BLACK);
-        DrawText(TextFormat("Pheromones:\n\t %.3f", pheromones[i][j]), x + 5, y + 4 * margin, margin, GREEN);
-        DrawText(TextFormat("Probablity:\n\t %.3f", probablitys[i][j]), x + 5, y + 8 * margin, margin, RED);
-    }
-
-
-
-    // Draw the ant at its current position
-    void AntGraphics::DrawAnt() const {
-
-        float scale = 1.0f; 
-        if(cities.size() < 5.0f){ // Change size of the ant based on how many cities there are
-          scale = 15.0f / (float)cities.size();
-          
-        }
-
-        float antTexWidth = (float)antTexture.width * scale;
-        float antTexHeight = (float)antTexture.height * scale; 
-        Vector2 origin = {antTexWidth * 0.5f, antTexHeight * 0.5f};
-        
-        Rectangle sourceRec = {0.0f, 0.0f, (float)antTexture.width, (float)antTexture.height};
-        Rectangle destRec = {currAnt->position.x, currAnt->position.y, antTexWidth, antTexHeight};
-
-        DrawTexturePro(antTexture, sourceRec, destRec, origin, currentRotation, WHITE);
-    }
-
-    // Check if a file exists
-    bool AntGraphics::checkFileExists(const std::string& pathIn) {
-        return fs::exists(pathIn) && fs::is_regular_file(pathIn);
-    }
-
-    // Check if a directory exists
-    bool AntGraphics::checkDirectoryExists(const std::string& pathIn) {
-        return fs::exists(pathIn) && fs::is_directory(pathIn);
-    }
+}
